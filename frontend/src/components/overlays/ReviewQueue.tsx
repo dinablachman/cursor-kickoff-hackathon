@@ -27,34 +27,42 @@ export function ReviewQueue() {
 
   return (
     <GamePanel title="Review Queue" wide>
-      <p className="mb-4 text-sm text-[#6b4a2a]">
+      <p className="panel-body mb-4">
         Code review happens on GitHub. Record your decision here after checking the PR + CI.
       </p>
-      {isLoading && <p className="text-sm text-[#7d5b38]">Loading…</p>}
+      {isLoading && <p className="panel-meta">Loading…</p>}
       {!isLoading && submissions.length === 0 && (
-        <p className="text-sm text-[#6b4a2a]">No pending submissions. Nice!</p>
+        <p className="panel-body">No pending submissions. Nice!</p>
       )}
       <ul className="space-y-3">
         {submissions.map((s) => (
-          <li key={s.id} className="rounded-lg border-2 border-[#3b2416] bg-[#f6e3bb] p-3">
+          <li key={s.id} className="border-2 border-[#3b2416] bg-[#f6e3bb] p-3">
             <div className="mb-2 flex flex-wrap items-center gap-2">
-              <span className="font-semibold">{s.bounty_title ?? `Submission #${s.id}`}</span>
+              <span className="panel-row-title">{s.bounty_title ?? `Submission #${s.id}`}</span>
               <CiBadge status={s.ci_status} />
+            </div>
+            <p className="panel-meta mb-2">
+              by @{s.submitter_username}
+              <span className="mx-1.5 opacity-50">·</span>
+              PR {s.pr_state}
               {s.ci_status === 'failing' && (
-                <span className="text-xs font-semibold text-red-600">⚠ CI failing</span>
+                <>
+                  <span className="mx-1.5 opacity-50">·</span>
+                  <span className="font-semibold text-[#c45c4a]">CI failing</span>
+                </>
               )}
               {s.ci_status === 'none' && (
-                <span className="text-xs text-orange-600">⚠ No CI on this repo</span>
+                <>
+                  <span className="mx-1.5 opacity-50">·</span>
+                  <span className="font-semibold text-[#d4880f]">No CI on this repo</span>
+                </>
               )}
-            </div>
-            <p className="mb-2 text-xs text-[#7d5b38]">
-              by @{s.submitter_username} · PR {s.pr_state}
             </p>
             <a
               href={s.pr_url}
               target="_blank"
               rel="noreferrer"
-              className="mb-3 inline-block text-sm text-sky-700 underline"
+              className="game-link game-link-external mb-3"
             >
               Open pull request
             </a>

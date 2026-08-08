@@ -53,12 +53,24 @@ The harness sends these from the fields in its header bar. Maintainer-only actio
 syncing repos, posting manual bounties, reviewing submissions, changing idea status, converting
 ideas to bounties.
 
+## Demo app repos
+
+`python seed.py` registers these three public ShawnLi14 apps as the default campus levels:
+
+| Repo | Role |
+| --- | --- |
+| [ShawnLi14/campus-ride](https://github.com/ShawnLi14/campus-ride) | Shuttle arrival board (ETA + filter bounties) |
+| [ShawnLi14/study-spot](https://github.com/ShawnLi14/study-spot) | Study room booking (interval + capacity bounties) |
+| [ShawnLi14/campus-bites-api](https://github.com/ShawnLi14/campus-bites-api) | Dining menu API (allergen + inventory bounties) |
+
+Each ships two open `bounty`-labeled issues. Prepared review fixtures: campus-ride PR #3 (failing CI), study-spot PR #3 (passing CI).
+
 ## GitHub modes
 
 `GITHUB_TOKEN` in `backend/.env` decides the mode; `GET /api/health` reports which one is active.
 
 - **live** — real GitHub API: repo validation, issues labeled `bounty`, PR state and check runs
-- **mock** — no token needed, deterministic fixtures so demos never block
+- **mock** — no token needed, deterministic fixtures so demos never block (includes the three demo apps above)
 
 In mock mode the PR number drives the result, which makes each review path reachable on purpose:
 

@@ -6,6 +6,7 @@ import { api } from '@/api/client'
 import type { IdeaCategory, IdeaStatus } from '@/api/types'
 import { useAuth } from '@/auth/AuthContext'
 import { GamePanel } from '@/components/ui/GamePanel'
+import { IdeaCategoryBadge, IdeaStatusBadge } from '@/components/ui/Badges'
 
 export function IdeasBoard() {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -72,33 +73,33 @@ export function IdeasBoard() {
         </div>
       </div>
 
-      {isLoading && <p className="text-sm text-[#7d5b38]">Loading…</p>}
+      {isLoading && <p className="panel-meta">Loading…</p>}
       <ul className="space-y-2">
         {ideas.map((idea) => (
           <li key={idea.id}>
             <Link
               to={`/ideas/${idea.id}`}
-              className="flex items-start justify-between gap-3 rounded-lg border-2 border-[#3b2416] bg-[#f6e3bb] px-3 py-2 hover:bg-[#efd49a]"
+              className="flex items-start justify-between gap-3 border-2 border-[#3b2416] bg-[#f6e3bb] px-3 py-2.5 hover:bg-[#efd49a]"
             >
-              <div>
-                <div className="font-semibold text-sm">{idea.title}</div>
-                <div className="mt-1 flex flex-wrap gap-2 text-xs text-[#7d5b38]">
-                  <span className="rounded bg-sky-100 px-1.5 py-0.5 capitalize text-sky-800">
-                    {idea.category}
-                  </span>
-                  <span className="rounded bg-gray-100 px-1.5 py-0.5 capitalize">
-                    {idea.status}
-                  </span>
-                  {idea.repo_name && <span>→ {idea.repo_name}</span>}
-                  <span>by @{idea.author_username}</span>
+              <div className="min-w-0">
+                <div className="panel-row-title">{idea.title}</div>
+                <div className="mt-2 flex flex-wrap items-center gap-2">
+                  <IdeaCategoryBadge category={idea.category} />
+                  <IdeaStatusBadge status={idea.status} />
+                  {idea.repo_name && (
+                    <span className="panel-meta">→ {idea.repo_name}</span>
+                  )}
+                  <span className="panel-meta">by @{idea.author_username}</span>
                 </div>
               </div>
-              <div className="font-pixel text-[11px] text-[#5cb85c]">▲ {idea.score}</div>
+              <div className="font-pixel shrink-0 text-[11px] tabular-nums text-[#4caf50]">
+                ▲ {idea.score}
+              </div>
             </Link>
           </li>
         ))}
         {!isLoading && ideas.length === 0 && (
-          <p className="text-sm text-[#7d5b38]">No ideas yet — propose the first one!</p>
+          <p className="panel-meta">No ideas yet — propose the first one!</p>
         )}
       </ul>
     </GamePanel>
@@ -265,18 +266,18 @@ export function IdeaDetail() {
   if (isLoading || !idea) {
     return (
       <GamePanel title="Idea" onClose={() => navigate('/ideas')}>
-        <p className="text-sm text-[#7d5b38]">Loading…</p>
+        <p className="panel-meta">Loading…</p>
       </GamePanel>
     )
   }
 
   return (
     <GamePanel title="Idea" onClose={() => navigate('/ideas')} wide>
-      <Link to="/ideas" className="mb-3 inline-block text-xs text-sky-700 underline">
+      <Link to="/ideas" className="game-link mb-4">
         ← Back to Ideas Lab
       </Link>
 
-      <div className="mb-4 flex gap-4">
+      <div className="mb-5 flex gap-4">
         <div className="flex flex-col items-center gap-1">
           <button
             type="button"
@@ -285,7 +286,7 @@ export function IdeaDetail() {
           >
             ▲
           </button>
-          <span className="font-pixel text-sm">{idea.score}</span>
+          <span className="font-pixel text-sm tabular-nums">{idea.score}</span>
           <button
             type="button"
             className={`game-btn px-2 py-1 ${idea.my_vote === -1 ? 'game-btn-danger' : 'bg-[#f6e3bb]'}`}
@@ -294,23 +295,21 @@ export function IdeaDetail() {
             ▼
           </button>
         </div>
-        <div className="flex-1">
-          <h3 className="mb-1 text-lg font-bold">{idea.title}</h3>
-          <div className="mb-2 flex flex-wrap gap-2 text-xs">
-            <span className="rounded bg-sky-100 px-1.5 py-0.5 capitalize text-sky-800">
-              {idea.category}
-            </span>
-            <span className="rounded bg-gray-100 px-1.5 py-0.5 capitalize">{idea.status}</span>
-            {idea.repo_name && <span>→ {idea.repo_name}</span>}
-            <span>by @{idea.author_username}</span>
+        <div className="min-w-0 flex-1">
+          <h3 className="panel-title mb-3">{idea.title}</h3>
+          <div className="mb-3 flex flex-wrap items-center gap-2">
+            <IdeaCategoryBadge category={idea.category} />
+            <IdeaStatusBadge status={idea.status} />
+            {idea.repo_name && <span className="panel-meta">→ {idea.repo_name}</span>}
+            <span className="panel-meta">by @{idea.author_username}</span>
           </div>
-          <p className="whitespace-pre-wrap text-sm text-[#4a3018]">{idea.description}</p>
+          <p className="panel-body whitespace-pre-wrap">{idea.description}</p>
         </div>
       </div>
 
       {isMaintainer && (
-        <div className="mb-4 flex flex-wrap gap-2 rounded-lg border-2 border-dashed border-gray-400 bg-[#f6e3bb] p-3">
-          <span className="w-full text-xs font-bold uppercase text-[#7d5b38]">Maintainer</span>
+        <div className="mb-5 flex flex-wrap gap-2 border-2 border-dashed border-[#8a6f52] bg-[#f6e3bb] p-3">
+          <span className="panel-label mb-1 w-full">Maintainer</span>
           {(['open', 'planned', 'done'] as IdeaStatus[]).map((s) => (
             <button
               key={s}
@@ -334,17 +333,15 @@ export function IdeaDetail() {
         </div>
       )}
 
-      <h4 className="font-pixel mb-2 text-[10px]">Comments</h4>
+      <h4 className="panel-label mb-3">Comments</h4>
       <ul className="mb-3 space-y-2">
         {sortedComments.map((c) => (
-          <li key={c.id} className="rounded-lg bg-[#f6e3bb] px-3 py-2 text-sm border-2 border-[#3b2416]">
-            <div className="mb-1 text-xs text-[#7d5b38]">@{c.username}</div>
-            {c.body}
+          <li key={c.id} className="border-2 border-[#3b2416] bg-[#f6e3bb] px-3 py-2">
+            <div className="panel-meta mb-1">@{c.username}</div>
+            <p className="panel-body">{c.body}</p>
           </li>
         ))}
-        {sortedComments.length === 0 && (
-          <p className="text-sm text-[#7d5b38]">No comments yet.</p>
-        )}
+        {sortedComments.length === 0 && <p className="panel-meta">No comments yet.</p>}
       </ul>
       <div className="flex gap-2">
         <input

@@ -5,7 +5,7 @@ import { toast } from 'sonner'
 import { api } from '@/api/client'
 import { useAuth } from '@/auth/AuthContext'
 import { GamePanel } from '@/components/ui/GamePanel'
-import { DifficultyStars, StatusBadge } from '@/components/ui/Badges'
+import { DifficultyStars, SourceBadge, StatusBadge } from '@/components/ui/Badges'
 
 export function BountyDetail() {
   const { repoId, bountyId } = useParams()
@@ -70,7 +70,7 @@ export function BountyDetail() {
   if (isLoading || !bounty) {
     return (
       <GamePanel title="Challenge" onClose={() => navigate(`/app/${repoId}`)}>
-        <p className="text-sm text-[#7d5b38]">Loading…</p>
+        <p className="panel-meta">Loading…</p>
       </GamePanel>
     )
   }
@@ -79,35 +79,33 @@ export function BountyDetail() {
 
   return (
     <GamePanel title="Challenge" onClose={() => navigate(`/app/${repoId}`)} wide>
-      <Link to={`/app/${repoId}`} className="mb-3 inline-block text-xs text-sky-700 underline">
+      <Link to={`/app/${repoId}`} className="game-link mb-4">
         ← Back to level
       </Link>
 
-      <h3 className="mb-2 text-lg font-bold">{bounty.title}</h3>
-      <div className="mb-3 flex flex-wrap items-center gap-2">
+      <h3 className="panel-title mb-3">{bounty.title}</h3>
+      <div className="mb-4 flex flex-wrap items-center gap-2">
         <DifficultyStars difficulty={bounty.difficulty} />
         <StatusBadge status={bounty.status} />
-        <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs capitalize">
-          {bounty.source}
-        </span>
+        <SourceBadge source={bounty.source} />
       </div>
 
-      <p className="mb-4 whitespace-pre-wrap text-sm text-[#4a3018]">{bounty.description}</p>
+      <p className="panel-body mb-4 whitespace-pre-wrap">{bounty.description}</p>
 
       {bounty.github_issue_url && (
         <a
           href={bounty.github_issue_url}
           target="_blank"
           rel="noreferrer"
-          className="mb-4 inline-block text-sm text-sky-700 underline"
+          className="game-link game-link-external mb-4"
         >
-          View GitHub issue #{bounty.github_issue_number}
+          GitHub issue #{bounty.github_issue_number}
         </a>
       )}
 
       {bounty.claimer_username && (
-        <p className="mb-4 text-sm text-[#6b4a2a]">
-          Claimed by <strong>@{bounty.claimer_username}</strong>
+        <p className="panel-meta mb-4">
+          Claimed by <span className="font-semibold text-[#4a3018]">@{bounty.claimer_username}</span>
         </p>
       )}
 
@@ -147,12 +145,10 @@ export function BountyDetail() {
       </div>
 
       {showSubmit && (
-        <div className="mt-4 rounded-lg border-2 border-[#3b2416] bg-[#f6e3bb] p-3">
-          <label className="mb-1 block text-xs font-bold uppercase text-[#6b4a2a]">
-            Pull request URL
-          </label>
+        <div className="mt-4 border-2 border-[#3b2416] bg-[#f6e3bb] p-3">
+          <label className="panel-label mb-2 block">Pull request URL</label>
           <input
-            className="game-input mb-2"
+            className="game-input mb-3"
             placeholder="https://github.com/owner/repo/pull/123"
             value={prUrl}
             onChange={(e) => setPrUrl(e.target.value)}

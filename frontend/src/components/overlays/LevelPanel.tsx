@@ -51,18 +51,18 @@ export function LevelPanel() {
   if (!repo) {
     return (
       <GamePanel title="Level not found">
-        <p className="text-sm text-[#6b4a2a]">This app isn't on the map yet.</p>
+        <p className="panel-body">This app isn't on the map yet.</p>
       </GamePanel>
     )
   }
 
   return (
     <GamePanel title={`Level: ${repo.name}`} wide>
-      <p className="mb-1 text-xs text-[#7d5b38]">{repo.full_name}</p>
-      <p className="mb-4 text-sm text-[#4a3018]">{repo.description}</p>
+      <p className="panel-meta mb-1">{repo.full_name}</p>
+      <p className="panel-body mb-5">{repo.description}</p>
 
-      <div className="mb-3 flex items-center justify-between">
-        <h3 className="font-pixel text-[10px]">Challenges</h3>
+      <div className="mb-3 flex items-center justify-between gap-3">
+        <h3 className="panel-label">Challenges</h3>
         {isMaintainer && (
           <button
             type="button"
@@ -75,7 +75,7 @@ export function LevelPanel() {
       </div>
 
       {showCreate && (
-        <div className="mb-4 rounded-lg border-2 border-[#3b2416] bg-[#f6e3bb] p-3">
+        <div className="mb-4 border-2 border-[#3b2416] bg-[#f6e3bb] p-3">
           <input
             className="game-input mb-2"
             placeholder="Title"
@@ -83,12 +83,12 @@ export function LevelPanel() {
             onChange={(e) => setTitle(e.target.value)}
           />
           <textarea
-            className="game-input mb-2 min-h-20"
+            className="game-input mb-3 min-h-20"
             placeholder="Description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
           />
-          <div className="mb-2 flex gap-2">
+          <div className="mb-3 flex gap-2">
             {(['easy', 'medium', 'hard'] as Difficulty[]).map((d) => (
               <button
                 key={d}
@@ -106,28 +106,28 @@ export function LevelPanel() {
         </div>
       )}
 
-      {isLoading && <p className="text-sm text-[#7d5b38]">Loading challenges…</p>}
+      {isLoading && <p className="panel-meta">Loading challenges…</p>}
 
       <ul className="space-y-2">
         {bounties.map((b) => (
           <li key={b.id}>
             <Link
               to={`/app/${repo.id}/bounty/${b.id}`}
-              className="flex items-center justify-between gap-3 rounded-lg border-2 border-[#3b2416] bg-[#f6e3bb] px-3 py-2 hover:bg-[#efd49a]"
+              className="flex items-center justify-between gap-3 border-2 border-[#3b2416] bg-[#f6e3bb] px-3 py-2.5 hover:bg-[#efd49a]"
             >
-              <div>
-                <div className="font-semibold text-sm">{b.title}</div>
-                <div className="mt-1 flex items-center gap-2">
+              <div className="min-w-0">
+                <div className="panel-row-title">{b.title}</div>
+                <div className="mt-2 flex flex-wrap items-center gap-2">
                   <DifficultyStars difficulty={b.difficulty} />
                   <StatusBadge status={b.status} />
                 </div>
               </div>
-              <span className="font-pixel text-[10px] text-[#8a6f52]">▶</span>
+              <span className="font-pixel shrink-0 text-[10px] text-[#8a6f52]">▶</span>
             </Link>
           </li>
         ))}
         {!isLoading && bounties.length === 0 && (
-          <p className="text-sm text-[#7d5b38]">No challenges yet — check back after a sync!</p>
+          <p className="panel-meta">No challenges yet — check back after a sync!</p>
         )}
       </ul>
     </GamePanel>

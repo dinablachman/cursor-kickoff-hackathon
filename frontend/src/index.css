@@ -25,6 +25,83 @@ body {
   font-family: var(--font-sans);
   background: #1a1a2e;
   color: var(--color-ink);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ---- Panel typography ---- */
+.panel-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--color-ink);
+  line-height: 1.35;
+  text-wrap: balance;
+}
+
+.panel-label {
+  font-family: var(--font-pixel);
+  font-size: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #7d5b38;
+  line-height: 1.4;
+}
+
+.panel-meta {
+  font-size: 0.75rem;
+  color: #7d5b38;
+  line-height: 1.45;
+}
+
+.panel-body {
+  font-size: 0.875rem;
+  line-height: 1.55;
+  color: #4a3018;
+  text-wrap: pretty;
+}
+
+.panel-row-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-ink);
+  line-height: 1.35;
+  text-wrap: pretty;
+}
+
+/* ---- In-panel links (nav + external) ---- */
+.game-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: var(--font-pixel);
+  font-size: 8px;
+  line-height: 1.4;
+  color: #5a3a1c;
+  text-decoration: none;
+  border-bottom: 2px solid #b88955;
+  padding: 1px 0;
+  letter-spacing: 0.03em;
+  transition:
+    color 120ms ease,
+    border-color 120ms ease,
+    background-color 120ms ease;
+}
+
+.game-link:hover {
+  color: var(--color-ink);
+  border-bottom-color: var(--color-ink);
+  background: rgba(246, 227, 187, 0.7);
+}
+
+.game-link:active {
+  transform: translateY(1px);
+}
+
+.game-link-external::after {
+  content: "↗";
+  font-size: 9px;
+  line-height: 1;
+  opacity: 0.75;
 }
 
 .font-pixel {

@@ -12,24 +12,22 @@ export function MyClaims() {
 
   return (
     <GamePanel title="My Claims" wide>
-      {isLoading && <p className="text-sm text-[#7d5b38]">Loading…</p>}
+      {isLoading && <p className="panel-meta">Loading…</p>}
       {!isLoading && claims.length === 0 && (
-        <p className="text-sm text-[#6b4a2a]">
-          No active claims. Walk the map and claim an open challenge!
-        </p>
+        <p className="panel-body">No active claims. Walk the map and claim an open challenge!</p>
       )}
       <ul className="space-y-2">
         {claims.map((claim) => (
           <li
             key={claim.id}
-            className="rounded-lg border-2 border-[#3b2416] bg-[#f6e3bb] px-3 py-3"
+            className="border-2 border-[#3b2416] bg-[#f6e3bb] px-3 py-3"
           >
-            <div className="flex items-start justify-between gap-2">
-              <div>
-                <div className="font-semibold">
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <div className="panel-row-title">
                   {claim.bounty?.title ?? `Bounty #${claim.bounty_id}`}
                 </div>
-                <div className="mt-1 flex flex-wrap items-center gap-2">
+                <div className="mt-2 flex flex-wrap items-center gap-2">
                   {claim.bounty && <StatusBadge status={claim.bounty.status} />}
                   {claim.submission && <CiBadge status={claim.submission.ci_status} />}
                 </div>
@@ -38,7 +36,7 @@ export function MyClaims() {
                     href={claim.submission.pr_url}
                     target="_blank"
                     rel="noreferrer"
-                    className="mt-1 inline-block text-xs text-sky-700 underline"
+                    className="game-link game-link-external mt-2"
                   >
                     View PR
                   </a>

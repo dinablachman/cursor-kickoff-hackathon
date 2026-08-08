@@ -39,12 +39,12 @@ export function statusLabel(status: BountyStatus): string {
 export function ciBadge(ci: CiStatus): { label: string; className: string } {
   switch (ci) {
     case 'passing':
-      return { label: 'CI ✓', className: 'bg-green-500 text-white' }
+      return { label: 'CI ✓', className: 'bg-[#4caf50] text-white' }
     case 'failing':
-      return { label: 'CI ✗', className: 'bg-red-500 text-white' }
+      return { label: 'CI ✗', className: 'bg-[#c45c4a] text-white' }
     case 'pending':
-      return { label: 'CI …', className: 'bg-yellow-400 text-black' }
+      return { label: 'CI …', className: 'bg-[#d4880f] text-white' }
     case 'none':
-      return { label: 'No CI', className: 'bg-gray-400 text-white' }
+      return { label: 'No CI', className: 'bg-[#8a6f52] text-white' }
   }
 }
