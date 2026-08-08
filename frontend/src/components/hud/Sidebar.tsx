@@ -48,18 +48,18 @@ export function Sidebar({ open, onClose }: SidebarProps) {
         onClick={onClose}
       />
       <aside
-        className={`fixed top-0 left-0 z-50 flex h-full w-80 flex-col game-panel rounded-none border-y-0 border-l-0 transition-transform duration-200 ${
+        className={`fixed top-0 left-0 z-50 flex h-full w-80 flex-col game-panel transition-transform duration-200 ${
           open ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
-        <div className="flex items-center justify-between border-b-4 border-[#2b2b2b] p-3">
+        <div className="flex items-center justify-between border-b-4 border-[#3b2416] p-3">
           <h2 className="font-pixel text-[11px]">Apps</h2>
-          <button type="button" className="game-btn bg-white px-2 py-1" onClick={onClose}>
+          <button type="button" className="game-btn bg-[#f6e3bb] px-2 py-1" onClick={onClose}>
             <X size={14} />
           </button>
         </div>
 
-        <div className="border-b-4 border-[#2b2b2b] p-3">
+        <div className="border-b-4 border-[#3b2416] p-3">
           <button
             type="button"
             className="game-btn game-btn-primary mb-3 flex w-full items-center justify-center gap-2"
@@ -72,7 +72,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
             Propose an idea
           </button>
           <div className="relative">
-            <Search size={14} className="absolute top-1/2 left-3 -translate-y-1/2 text-gray-400" />
+            <Search size={14} className="absolute top-1/2 left-3 -translate-y-1/2 text-[#8a6f52]" />
             <input
               className="game-input pl-9"
               placeholder="Search apps…"
@@ -84,18 +84,18 @@ export function Sidebar({ open, onClose }: SidebarProps) {
 
         <div className="overlay-scroll flex-1 p-2">
           {filtered.length === 0 && (
-            <p className="p-3 text-sm text-gray-500">No apps match.</p>
+            <p className="p-3 text-sm text-[#7d5b38]">No apps match.</p>
           )}
           {filtered.map((repo) => (
             <Link
               key={repo.id}
               to={`/app/${repo.id}`}
               onClick={onClose}
-              className="mb-1 flex items-start justify-between gap-2 rounded-lg px-3 py-2 hover:bg-yellow-100"
+              className="mb-1 flex items-start justify-between gap-2 rounded-lg px-3 py-2 hover:bg-[#efd49a]"
             >
               <div>
                 <div className="font-semibold text-sm">{repo.name}</div>
-                <div className="text-xs text-gray-500 line-clamp-2">{repo.description}</div>
+                <div className="text-xs text-[#7d5b38] line-clamp-2">{repo.description}</div>
               </div>
               <span className="font-pixel shrink-0 rounded-full bg-[#5cb85c] px-2 py-1 text-[9px] text-white">
                 {repo.open_bounty_count}

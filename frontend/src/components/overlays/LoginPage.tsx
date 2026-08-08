@@ -30,21 +30,27 @@ export function LoginPage() {
   }
 
   return (
-    <div className="relative flex h-full items-center justify-center overflow-hidden bg-linear-to-b from-[#5ec8ff] to-[#b8e4ff]">
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-[#5cb85c]" />
-      <div className="pointer-events-none absolute inset-x-0 bottom-[30%] h-8 bg-[#3d8b3d]" />
-      <form
-        onSubmit={onSubmit}
-        className="game-panel relative z-10 w-full max-w-md p-6"
-      >
-        <h1 className="font-pixel mb-2 text-center text-sm leading-relaxed text-[#1a1a2e]">
+    <div className="relative flex h-full items-center justify-center overflow-hidden">
+      <img
+        src="/pixui/bg-plains.png"
+        alt=""
+        draggable={false}
+        className="pixelated absolute inset-0 h-full w-full object-cover"
+      />
+      <div className="absolute inset-0 bg-black/25" />
+
+      <form onSubmit={onSubmit} className="game-panel relative z-10 w-full max-w-md">
+        <div className="mb-2 flex justify-center">
+          <div className="npc-sprite" aria-hidden />
+        </div>
+        <h1 className="font-pixel mb-2 text-center text-sm leading-relaxed text-[#3b2416]">
           Campus Bug Bounty
         </h1>
-        <p className="mb-6 text-center text-sm text-gray-600">
+        <p className="mb-6 text-center text-sm text-[#6b4a2a]">
           Player Select — pick a GitHub username and role to enter the world map.
         </p>
 
-        <label className="mb-1 block text-xs font-bold uppercase tracking-wide text-gray-700">
+        <label className="mb-1 block font-pixel text-[8px] uppercase tracking-wide text-[#6b4a2a]">
           GitHub Username
         </label>
         <input
@@ -55,7 +61,7 @@ export function LoginPage() {
           autoFocus
         />
 
-        <label className="mb-1 block text-xs font-bold uppercase tracking-wide text-gray-700">
+        <label className="mb-1 block font-pixel text-[8px] uppercase tracking-wide text-[#6b4a2a]">
           Role
         </label>
         <div className="mb-6 grid grid-cols-2 gap-2">
@@ -63,7 +69,7 @@ export function LoginPage() {
             <button
               key={r}
               type="button"
-              className={`game-btn ${role === r ? 'game-btn-primary' : 'bg-white'}`}
+              className={`game-btn ${role === r ? 'game-btn-primary' : ''}`}
               onClick={() => setRole(r)}
             >
               {r}
@@ -75,6 +81,10 @@ export function LoginPage() {
           {loading ? 'Loading…' : 'Start Game ▶'}
         </button>
       </form>
+
+      <p className="absolute bottom-2 left-1/2 z-10 w-full -translate-x-1/2 px-4 text-center font-pixel text-[7px] leading-relaxed text-white/80">
+        Pixel art: Krishna Palacio (Minifantasy UI Overhaul) · tiopalada (CC0) · via phaser-pixui
+      </p>
     </div>
   )
 }

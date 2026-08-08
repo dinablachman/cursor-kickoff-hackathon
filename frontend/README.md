@@ -41,3 +41,16 @@ Vite proxies `/api` → `http://localhost:8000`.
 ## Login
 
 Dev “player select”: GitHub username + role (`student` / `maintainer`).
+
+## Art credits
+
+Pixel art assets in `public/pixui/` come from the
+[phaser-pixui](https://github.com/skhoroshavin/phaser-pixui) example app:
+
+- **Minifantasy** UI sprites (frame, buttons, NPC walk cycle) by
+  [Krishna Palacio](https://krishna-palacio.itch.io), from
+  [Minifantasy UI Overhaul](https://krishna-palacio.itch.io/minifantasy-ui-overhaul).
+  Credit required; do not redistribute as standalone assets.
+- **Plains background** by [tiopalada](https://tiopalada.itch.io), CC0.
+
+Full license text: `public/pixui/LICENSE`.

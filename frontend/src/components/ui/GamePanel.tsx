@@ -23,9 +23,9 @@ export function GamePanel({ title, children, wide, onClose }: GamePanelProps) {
         aria-modal="true"
         aria-label={title}
       >
-        <div className="sticky top-0 z-10 flex items-center justify-between border-b-4 border-[#2b2b2b] bg-[#fff8e7] px-4 py-3">
+        <div className="sticky top-0 z-10 flex items-center justify-between border-b-4 border-[#3b2416] bg-[#e7bc78] px-2 py-2">
           <h2 className="font-pixel text-[11px] leading-relaxed">{title}</h2>
-          <button type="button" className="game-btn bg-white px-2 py-1" onClick={close}>
+          <button type="button" className="game-btn" onClick={close}>
             <X size={14} />
           </button>
         </div>

@@ -21,15 +21,13 @@ export function Hud({ sidebarOpen, onToggleSidebar, menuOpen, onToggleMenu }: Hu
 
   return (
     <div className="pointer-events-none absolute inset-x-0 top-0 z-40 flex items-start justify-between p-3">
-      <div className="pointer-events-auto game-panel flex items-center gap-3 px-3 py-2">
-        <span className="text-2xl" aria-hidden>
-          🧑‍🎓
-        </span>
+      <div className="pointer-events-auto game-panel flex items-center gap-2 py-0 pr-2">
+        <div className="npc-sprite-sm shrink-0" aria-hidden />
         <div>
-          <div className="font-pixel text-[10px] text-[#1a1a2e]">
+          <div className="font-pixel text-[10px] text-[#3b2416]">
             {user?.github_username}
           </div>
-          <div className="text-xs text-gray-600 capitalize">
+          <div className="text-xs text-[#6b4a2a] capitalize">
             {user?.role} · claims ×{claims.length}
           </div>
         </div>
@@ -38,7 +36,7 @@ export function Hud({ sidebarOpen, onToggleSidebar, menuOpen, onToggleMenu }: Hu
       <div className="pointer-events-auto flex gap-2">
         <button
           type="button"
-          className={`game-btn flex items-center gap-2 ${sidebarOpen ? 'game-btn-primary' : 'bg-white'}`}
+          className={`game-btn flex items-center gap-2 ${sidebarOpen ? 'game-btn-primary' : 'bg-[#f6e3bb]'}`}
           onClick={onToggleSidebar}
           title="Quick access (Tab)"
         >
@@ -48,17 +46,17 @@ export function Hud({ sidebarOpen, onToggleSidebar, menuOpen, onToggleMenu }: Hu
         <div className="relative">
           <button
             type="button"
-            className={`game-btn flex items-center gap-2 ${menuOpen ? 'game-btn-blue' : 'bg-white'}`}
+            className={`game-btn flex items-center gap-2 ${menuOpen ? 'game-btn-blue' : 'bg-[#f6e3bb]'}`}
             onClick={onToggleMenu}
           >
             <Menu size={14} />
             Menu
           </button>
           {menuOpen && (
-            <div className="game-panel absolute right-0 mt-2 w-48 overflow-hidden p-1">
+            <div className="game-panel absolute right-0 mt-2 w-52 p-0">
               <Link
                 to="/claims"
-                className="block rounded px-3 py-2 text-sm hover:bg-yellow-100"
+                className="block rounded px-3 py-2 text-sm hover:bg-[#efd49a]"
                 onClick={onToggleMenu}
               >
                 My Claims
@@ -67,14 +65,14 @@ export function Hud({ sidebarOpen, onToggleSidebar, menuOpen, onToggleMenu }: Hu
                 <>
                   <Link
                     to="/review"
-                    className="block rounded px-3 py-2 text-sm hover:bg-yellow-100"
+                    className="block rounded px-3 py-2 text-sm hover:bg-[#efd49a]"
                     onClick={onToggleMenu}
                   >
                     Review Queue
                   </Link>
                   <Link
                     to="/repos"
-                    className="block rounded px-3 py-2 text-sm hover:bg-yellow-100"
+                    className="block rounded px-3 py-2 text-sm hover:bg-[#efd49a]"
                     onClick={onToggleMenu}
                   >
                     Register Repo
@@ -83,7 +81,7 @@ export function Hud({ sidebarOpen, onToggleSidebar, menuOpen, onToggleMenu }: Hu
               )}
               <Link
                 to="/ideas"
-                className="block rounded px-3 py-2 text-sm hover:bg-yellow-100"
+                className="block rounded px-3 py-2 text-sm hover:bg-[#efd49a]"
                 onClick={onToggleMenu}
               >
                 Ideas Lab

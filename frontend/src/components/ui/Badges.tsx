@@ -5,24 +5,24 @@ import { cn } from '@/lib/utils'
 export function DifficultyStars({ difficulty }: { difficulty: Difficulty }) {
   const n = difficultyStars(difficulty)
   return (
-    <span className="font-pixel text-[10px] text-yellow-500" title={difficulty}>
+    <span className="font-pixel text-[10px] text-[#d4880f]" title={difficulty}>
       {'★'.repeat(n)}
-      <span className="text-gray-300">{'★'.repeat(3 - n)}</span>
+      <span className="text-[#c9b088]">{'★'.repeat(3 - n)}</span>
     </span>
   )
 }
 
 export function StatusBadge({ status }: { status: BountyStatus }) {
   const colors: Record<BountyStatus, string> = {
-    open: 'bg-sky-100 text-sky-800',
-    claimed: 'bg-orange-100 text-orange-800',
-    in_review: 'bg-purple-100 text-purple-800',
-    completed: 'bg-green-100 text-green-800',
+    open: 'bg-[#4a90c2] text-white',
+    claimed: 'bg-[#d4880f] text-white',
+    in_review: 'bg-[#8e5abc] text-white',
+    completed: 'bg-[#4caf50] text-white',
   }
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold',
+        'inline-flex items-center gap-1 border-2 border-[#3b2416] px-1.5 py-0.5 font-pixel text-[7px]',
         colors[status],
       )}
     >
@@ -37,7 +37,7 @@ export function CiBadge({ status }: { status: CiStatus }) {
   return (
     <span
       className={cn(
-        'inline-flex rounded-full px-2 py-0.5 font-pixel text-[9px]',
+        'inline-flex border-2 border-[#3b2416] px-1.5 py-0.5 font-pixel text-[7px]',
         badge.className,
       )}
     >

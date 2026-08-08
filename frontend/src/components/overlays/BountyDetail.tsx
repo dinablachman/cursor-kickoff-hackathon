@@ -70,7 +70,7 @@ export function BountyDetail() {
   if (isLoading || !bounty) {
     return (
       <GamePanel title="Challenge" onClose={() => navigate(`/app/${repoId}`)}>
-        <p className="text-sm text-gray-500">Loading…</p>
+        <p className="text-sm text-[#7d5b38]">Loading…</p>
       </GamePanel>
     )
   }
@@ -92,7 +92,7 @@ export function BountyDetail() {
         </span>
       </div>
 
-      <p className="mb-4 whitespace-pre-wrap text-sm text-gray-700">{bounty.description}</p>
+      <p className="mb-4 whitespace-pre-wrap text-sm text-[#4a3018]">{bounty.description}</p>
 
       {bounty.github_issue_url && (
         <a
@@ -106,7 +106,7 @@ export function BountyDetail() {
       )}
 
       {bounty.claimer_username && (
-        <p className="mb-4 text-sm text-gray-600">
+        <p className="mb-4 text-sm text-[#6b4a2a]">
           Claimed by <strong>@{bounty.claimer_username}</strong>
         </p>
       )}
@@ -127,7 +127,7 @@ export function BountyDetail() {
           <>
             <button
               type="button"
-              className="game-btn bg-white"
+              className="game-btn bg-[#f6e3bb]"
               disabled={releaseMut.isPending}
               onClick={() => releaseMut.mutate()}
             >
@@ -147,8 +147,8 @@ export function BountyDetail() {
       </div>
 
       {showSubmit && (
-        <div className="mt-4 rounded-lg border-2 border-[#2b2b2b] bg-white p-3">
-          <label className="mb-1 block text-xs font-bold uppercase text-gray-600">
+        <div className="mt-4 rounded-lg border-2 border-[#3b2416] bg-[#f6e3bb] p-3">
+          <label className="mb-1 block text-xs font-bold uppercase text-[#6b4a2a]">
             Pull request URL
           </label>
           <input

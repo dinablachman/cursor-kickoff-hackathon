@@ -12,9 +12,9 @@ export function MyClaims() {
 
   return (
     <GamePanel title="My Claims" wide>
-      {isLoading && <p className="text-sm text-gray-500">Loading…</p>}
+      {isLoading && <p className="text-sm text-[#7d5b38]">Loading…</p>}
       {!isLoading && claims.length === 0 && (
-        <p className="text-sm text-gray-600">
+        <p className="text-sm text-[#6b4a2a]">
           No active claims. Walk the map and claim an open challenge!
         </p>
       )}
@@ -22,7 +22,7 @@ export function MyClaims() {
         {claims.map((claim) => (
           <li
             key={claim.id}
-            className="rounded-lg border-2 border-[#2b2b2b] bg-white px-3 py-3"
+            className="rounded-lg border-2 border-[#3b2416] bg-[#f6e3bb] px-3 py-3"
           >
             <div className="flex items-start justify-between gap-2">
               <div>
@@ -47,7 +47,7 @@ export function MyClaims() {
               {claim.bounty && (
                 <Link
                   to={`/app/${claim.bounty.repo_id}/bounty/${claim.bounty_id}`}
-                  className="game-btn bg-white"
+                  className="game-btn bg-[#f6e3bb]"
                 >
                   Open
                 </Link>

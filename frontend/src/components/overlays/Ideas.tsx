@@ -27,7 +27,7 @@ export function IdeasBoard() {
         <div className="flex flex-wrap gap-2">
           <button
             type="button"
-            className={`game-btn ${!category ? 'game-btn-primary' : 'bg-white'}`}
+            className={`game-btn ${!category ? 'game-btn-primary' : 'bg-[#f6e3bb]'}`}
             onClick={() => {
               const next = new URLSearchParams(searchParams)
               next.delete('category')
@@ -40,7 +40,7 @@ export function IdeasBoard() {
             <button
               key={c}
               type="button"
-              className={`game-btn ${category === c ? 'game-btn-primary' : 'bg-white'}`}
+              className={`game-btn ${category === c ? 'game-btn-primary' : 'bg-[#f6e3bb]'}`}
               onClick={() => {
                 const next = new URLSearchParams(searchParams)
                 next.set('category', c)
@@ -56,7 +56,7 @@ export function IdeasBoard() {
             <button
               key={s}
               type="button"
-              className={`game-btn ${sort === s ? 'game-btn-blue' : 'bg-white'}`}
+              className={`game-btn ${sort === s ? 'game-btn-blue' : 'bg-[#f6e3bb]'}`}
               onClick={() => {
                 const next = new URLSearchParams(searchParams)
                 next.set('sort', s)
@@ -72,17 +72,17 @@ export function IdeasBoard() {
         </div>
       </div>
 
-      {isLoading && <p className="text-sm text-gray-500">Loading…</p>}
+      {isLoading && <p className="text-sm text-[#7d5b38]">Loading…</p>}
       <ul className="space-y-2">
         {ideas.map((idea) => (
           <li key={idea.id}>
             <Link
               to={`/ideas/${idea.id}`}
-              className="flex items-start justify-between gap-3 rounded-lg border-2 border-[#2b2b2b] bg-white px-3 py-2 hover:bg-yellow-50"
+              className="flex items-start justify-between gap-3 rounded-lg border-2 border-[#3b2416] bg-[#f6e3bb] px-3 py-2 hover:bg-[#efd49a]"
             >
               <div>
                 <div className="font-semibold text-sm">{idea.title}</div>
-                <div className="mt-1 flex flex-wrap gap-2 text-xs text-gray-500">
+                <div className="mt-1 flex flex-wrap gap-2 text-xs text-[#7d5b38]">
                   <span className="rounded bg-sky-100 px-1.5 py-0.5 capitalize text-sky-800">
                     {idea.category}
                   </span>
@@ -98,7 +98,7 @@ export function IdeasBoard() {
           </li>
         ))}
         {!isLoading && ideas.length === 0 && (
-          <p className="text-sm text-gray-500">No ideas yet — propose the first one!</p>
+          <p className="text-sm text-[#7d5b38]">No ideas yet — propose the first one!</p>
         )}
       </ul>
     </GamePanel>
@@ -167,7 +167,7 @@ export function NewIdea() {
             <button
               key={c}
               type="button"
-              className={`game-btn ${category === c ? 'game-btn-primary' : 'bg-white'}`}
+              className={`game-btn ${category === c ? 'game-btn-primary' : 'bg-[#f6e3bb]'}`}
               onClick={() => setCategory(c)}
             >
               {c}
@@ -265,7 +265,7 @@ export function IdeaDetail() {
   if (isLoading || !idea) {
     return (
       <GamePanel title="Idea" onClose={() => navigate('/ideas')}>
-        <p className="text-sm text-gray-500">Loading…</p>
+        <p className="text-sm text-[#7d5b38]">Loading…</p>
       </GamePanel>
     )
   }
@@ -280,7 +280,7 @@ export function IdeaDetail() {
         <div className="flex flex-col items-center gap-1">
           <button
             type="button"
-            className={`game-btn px-2 py-1 ${idea.my_vote === 1 ? 'game-btn-primary' : 'bg-white'}`}
+            className={`game-btn px-2 py-1 ${idea.my_vote === 1 ? 'game-btn-primary' : 'bg-[#f6e3bb]'}`}
             onClick={() => voteMut.mutate(1)}
           >
             ▲
@@ -288,7 +288,7 @@ export function IdeaDetail() {
           <span className="font-pixel text-sm">{idea.score}</span>
           <button
             type="button"
-            className={`game-btn px-2 py-1 ${idea.my_vote === -1 ? 'game-btn-danger' : 'bg-white'}`}
+            className={`game-btn px-2 py-1 ${idea.my_vote === -1 ? 'game-btn-danger' : 'bg-[#f6e3bb]'}`}
             onClick={() => voteMut.mutate(-1)}
           >
             ▼
@@ -304,18 +304,18 @@ export function IdeaDetail() {
             {idea.repo_name && <span>→ {idea.repo_name}</span>}
             <span>by @{idea.author_username}</span>
           </div>
-          <p className="whitespace-pre-wrap text-sm text-gray-700">{idea.description}</p>
+          <p className="whitespace-pre-wrap text-sm text-[#4a3018]">{idea.description}</p>
         </div>
       </div>
 
       {isMaintainer && (
-        <div className="mb-4 flex flex-wrap gap-2 rounded-lg border-2 border-dashed border-gray-400 bg-white p-3">
-          <span className="w-full text-xs font-bold uppercase text-gray-500">Maintainer</span>
+        <div className="mb-4 flex flex-wrap gap-2 rounded-lg border-2 border-dashed border-gray-400 bg-[#f6e3bb] p-3">
+          <span className="w-full text-xs font-bold uppercase text-[#7d5b38]">Maintainer</span>
           {(['open', 'planned', 'done'] as IdeaStatus[]).map((s) => (
             <button
               key={s}
               type="button"
-              className={`game-btn ${idea.status === s ? 'game-btn-blue' : 'bg-white'}`}
+              className={`game-btn ${idea.status === s ? 'game-btn-blue' : 'bg-[#f6e3bb]'}`}
               onClick={() => statusMut.mutate(s)}
             >
               {s}
@@ -337,13 +337,13 @@ export function IdeaDetail() {
       <h4 className="font-pixel mb-2 text-[10px]">Comments</h4>
       <ul className="mb-3 space-y-2">
         {sortedComments.map((c) => (
-          <li key={c.id} className="rounded-lg bg-white px-3 py-2 text-sm border-2 border-[#2b2b2b]">
-            <div className="mb-1 text-xs text-gray-500">@{c.username}</div>
+          <li key={c.id} className="rounded-lg bg-[#f6e3bb] px-3 py-2 text-sm border-2 border-[#3b2416]">
+            <div className="mb-1 text-xs text-[#7d5b38]">@{c.username}</div>
             {c.body}
           </li>
         ))}
         {sortedComments.length === 0 && (
-          <p className="text-sm text-gray-500">No comments yet.</p>
+          <p className="text-sm text-[#7d5b38]">No comments yet.</p>
         )}
       </ul>
       <div className="flex gap-2">

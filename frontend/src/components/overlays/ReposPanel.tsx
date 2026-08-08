@@ -53,8 +53,8 @@ export function ReposPanel() {
 
   return (
     <GamePanel title="Register Repos" wide>
-      <form onSubmit={onSubmit} className="mb-6 rounded-lg border-2 border-[#2b2b2b] bg-white p-3">
-        <p className="mb-3 text-sm text-gray-600">
+      <form onSubmit={onSubmit} className="mb-6 rounded-lg border-2 border-[#3b2416] bg-[#f6e3bb] p-3">
+        <p className="mb-3 text-sm text-[#6b4a2a]">
           Add a campus app as <code>owner/name</code>. It appears as a new level on the world map.
         </p>
         <div className="mb-2 grid grid-cols-2 gap-2">
@@ -87,11 +87,11 @@ export function ReposPanel() {
         {repos.map((repo) => (
           <li
             key={repo.id}
-            className="flex items-center justify-between gap-2 rounded-lg border-2 border-[#2b2b2b] bg-white px-3 py-2"
+            className="flex items-center justify-between gap-2 rounded-lg border-2 border-[#3b2416] bg-[#f6e3bb] px-3 py-2"
           >
             <div>
               <div className="font-semibold text-sm">{repo.full_name}</div>
-              <div className="text-xs text-gray-500">
+              <div className="text-xs text-[#7d5b38]">
                 {repo.open_bounty_count} open · {repo.description}
               </div>
             </div>
