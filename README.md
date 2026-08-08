@@ -1,59 +1,142 @@
 # Campus Bug Bounty Board
 
-A bounty board web app where campus app maintainers register GitHub repos, bugs become claimable bounties (synced from GitHub issues or posted manually), and students submit PRs that go through CI checks plus human review.
+Campus app maintainers register GitHub repos, bugs become claimable bounties (synced from labeled
+GitHub issues or posted manually), and students submit PRs that go through CI checks plus human
+review.
 
-## Status
+This repo is API-first: `backend/` is the real deliverable, `frontend/` is a deliberately plain
+harness for exercising the endpoints while the production UI is built separately.
 
-Board backend/frontend scaffolding is not started yet. The **demo campus apps** below are ready as standalone GitHub repositories for issue sync and review-queue demos once the board API exists.
+## Stack
 
-## Demo campus apps
+- `backend/` — FastAPI + SQLAlchemy + SQLite
+- `frontend/` — React + Vite + TypeScript test harness
+- GitHub REST API for repo validation, issue sync, and PR/CI status
 
-Three public sibling repositories under [`ShawnLi14`](https://github.com/ShawnLi14):
+## Quick start
 
-| App | Repo | Stack | Hero bug |
-|-----|------|-------|----------|
-| Campus Ride | [campus-ride](https://github.com/ShawnLi14/campus-ride) | React + Vite + TypeScript | ETA string sort (`"12 min"` before `"3 min"`) |
-| Study Spot | [study-spot](https://github.com/ShawnLi14/study-spot) | React + Vite + TypeScript | Inclusive booking boundaries reject back-to-back slots |
-| Campus Bites API | [campus-bites-api](https://github.com/ShawnLi14/campus-bites-api) | FastAPI | Multi-allergen exclusion uses wrong boolean logic |
-
-Each repo ships:
-
-- Deterministic sample data and two `bounty`-labeled issues
-- `difficulty: easy` / `difficulty: medium` labels
-- CI via GitHub Actions
-- `demo-buggy-v1` reset tag
-- Presenter notes in `DEMO.md`
-
-### Local checkouts
-
-Clone next to this board repo:
+### Backend
 
 ```bash
-cd ../
-git clone https://github.com/ShawnLi14/campus-ride.git
-git clone https://github.com/ShawnLi14/study-spot.git
-git clone https://github.com/ShawnLi14/campus-bites-api.git
+cd backend
+python -m venv .venv
+.venv\Scripts\activate          # macOS/Linux: source .venv/bin/activate
+pip install -r requirements.txt
+copy .env.example .env          # macOS/Linux: cp .env.example .env
+python seed.py                  # optional demo data
+uvicorn app.main:app --reload
 ```
 
-### Seeded issue inventory
+API runs at `http://localhost:8000`, interactive docs at `http://localhost:8000/docs`.
 
-Once published, list all claimable demos with:
+### Frontend harness
 
 ```bash
-gh issue list --repo ShawnLi14/campus-ride --label bounty
-gh issue list --repo ShawnLi14/study-spot --label bounty
-gh issue list --repo ShawnLi14/campus-bites-api --label bounty
+cd frontend
+npm install
+npm run dev
 ```
 
-### Review-queue fixtures
+Runs at `http://localhost:5173`. Set `VITE_API_URL` if the backend isn't on port 8000.
 
-- **campus-ride:** open PR with failing CI (incomplete ETA fix) — demo “request changes”
-- **study-spot:** open PR with passing CI (correct boundary fix) — demo “approve”
+## Identity
 
-### Board sync limitation
+There is no auth. Every request identifies itself with two headers, and users are created on first
+use:
 
-Registering these repos and syncing issues into the bounty board requires the FastAPI backend (not yet built). Until then, use GitHub Issues / PRs and each app’s `DEMO.md` for the presenter walkthrough.
+```
+X-GitHub-Username: prof-ada
+X-Role: maintainer      # or: student
+```
 
-## Design docs
+The harness sends these from the fields in its header bar. Maintainer-only actions: registering and
+syncing repos, posting manual bounties, reviewing submissions, changing idea status, converting
+ideas to bounties.
 
-- [Campus Demo Apps Design](docs/superpowers/specs/2026-08-08-campus-demo-apps-design.md)
+## GitHub modes
+
+`GITHUB_TOKEN` in `backend/.env` decides the mode; `GET /api/health` reports which one is active.
+
+- **live** — real GitHub API: repo validation, issues labeled `bounty`, PR state and check runs
+- **mock** — no token needed, deterministic fixtures so demos never block
+
+In mock mode the PR number drives the result, which makes each review path reachable on purpose:
+
+| PR URL ends in | PR state | CI status |
+| --- | --- | --- |
+| a multiple of 3 (e.g. `/pull/3`) | merged | success |
+| `n % 3 == 1` (e.g. `/pull/1`) | open | success |
+| `n % 3 == 2` (e.g. `/pull/2`) | open | failure |
+
+## Bounty lifecycle
+
+```
+open --claim--> claimed --submit PR--> in_review --approve (PR merged)--> completed
+                   ^                        |
+                   +---- request_changes ---+
+                   
+reject or release -> back to open
+```
+
+Rules the API enforces:
+
+- One active claim per bounty; each user holds at most 2 active claims
+- A submitted PR must target the bounty's repo, and (when GitHub reports an author) be authored by
+  the claimer
+- Approve only succeeds if GitHub confirms the PR is merged; the backend re-checks at decision time
+- Review decisions are stored as their own step, so an automated reviewer can be added later without
+  schema changes
+
+## API
+
+| Method | Path | Role | Notes |
+| --- | --- | --- | --- |
+| GET | `/api/health` | — | Status plus active GitHub mode |
+| GET | `/api/me` | any | Current user (creates on first use) |
+| GET | `/api/repos` | any | Registered repos |
+| POST | `/api/repos` | maintainer | Body `{ full_name, description?, bounty_label? }` |
+| GET | `/api/repos/{id}` | any | Single repo |
+| POST | `/api/repos/{id}/sync` | maintainer | Import open issues with the repo's bounty label |
+| GET | `/api/bounties` | any | Filters: `repo_id`, `difficulty`, `status` |
+| POST | `/api/bounties` | maintainer | Manual bounty on a repo you maintain |
+| GET | `/api/bounties/{id}` | any | Single bounty with claim and latest submission |
+| POST | `/api/bounties/{id}/claim` | any | Claim an open bounty |
+| POST | `/api/bounties/{id}/release` | claimer or maintainer | Release the active claim |
+| POST | `/api/bounties/{id}/submit` | claimer | Body `{ pr_url }` |
+| GET | `/api/me/claims` | any | Active claims (`?include_released=true` for history) |
+| POST | `/api/submissions/{id}/refresh` | any | Re-poll PR state and CI |
+| GET | `/api/reviews` | maintainer | Pending queue for your repos (`?all_repos=true`) |
+| POST | `/api/reviews/{submission_id}` | maintainer | Body `{ decision, note? }` where decision is `approve`, `request_changes`, or `reject` |
+| GET | `/api/ideas` | any | Filters: `category`, `status`, `repo_id`; `sort` is `top` or `new` |
+| POST | `/api/ideas` | any | Body `{ title, description?, category, repo_id? }` |
+| GET | `/api/ideas/{id}` | any | Idea with comments and your vote |
+| POST | `/api/ideas/{id}/vote` | any | Body `{ value }` where value is `1`, `-1`, or `0` to clear |
+| GET/POST | `/api/ideas/{id}/comments` | any | Flat comment list |
+| PATCH | `/api/ideas/{id}/status` | maintainer | Body `{ status }`: `open`, `planned`, `done` |
+| POST | `/api/ideas/{id}/convert` | maintainer | Create a bounty from a feature idea |
+
+## Ideas board
+
+A second board for proposing features on existing campus apps (`feature`, optionally tagged to a
+repo) or entirely new apps (`new-app`). One vote per user per idea, changeable and removable.
+Maintainers move ideas to `planned`/`done` and can convert a feature idea on their own repo into a
+bounty, which links the two boards.
+
+## Testing
+
+```bash
+cd backend
+.venv\Scripts\python.exe smoke_test.py
+```
+
+Runs the full lifecycle — repo registration, sync, claim caps, PR verification, every review path,
+and the ideas flows — against a throwaway SQLite file in mock mode.
+
+## Notes for the frontend team
+
+- CORS allows `http://localhost:5173` and `http://localhost:3000` by default; change `CORS_ORIGINS`
+  in `backend/.env` to add more.
+- `frontend/` is a throwaway harness. Build the real UI wherever you like and point it at the same
+  endpoints; nothing in the backend depends on it.
+- Code review itself happens on GitHub. The platform records the decision and the CI signal; it
+  never executes submitted code.
