@@ -1,0 +1,61 @@
+import { Link } from 'react-router-dom'
+import { useQuery } from '@tanstack/react-query'
+import { api } from '@/api/client'
+import { GamePanel } from '@/components/ui/GamePanel'
+import { CiBadge, StatusBadge } from '@/components/ui/Badges'
+
+export function MyClaims() {
+  const { data: claims = [], isLoading } = useQuery({
+    queryKey: ['claims'],
+    queryFn: () => api.getMyClaims(),
+  })
+
+  return (
+    <GamePanel title="My Claims" wide>
+      {isLoading && <p className="text-sm text-gray-500">Loading…</p>}
+      {!isLoading && claims.length === 0 && (
+        <p className="text-sm text-gray-600">
+          No active claims. Walk the map and claim an open challenge!
+        </p>
+      )}
+      <ul className="space-y-2">
+        {claims.map((claim) => (
+          <li
+            key={claim.id}
+            className="rounded-lg border-2 border-[#2b2b2b] bg-white px-3 py-3"
+          >
+            <div className="flex items-start justify-between gap-2">
+              <div>
+                <div className="font-semibold">
+                  {claim.bounty?.title ?? `Bounty #${claim.bounty_id}`}
+                </div>
+                <div className="mt-1 flex flex-wrap items-center gap-2">
+                  {claim.bounty && <StatusBadge status={claim.bounty.status} />}
+                  {claim.submission && <CiBadge status={claim.submission.ci_status} />}
+                </div>
+                {claim.submission && (
+                  <a
+                    href={claim.submission.pr_url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="mt-1 inline-block text-xs text-sky-700 underline"
+                  >
+                    View PR
+                  </a>
+                )}
+              </div>
+              {claim.bounty && (
+                <Link
+                  to={`/app/${claim.bounty.repo_id}/bounty/${claim.bounty_id}`}
+                  className="game-btn bg-white"
+                >
+                  Open
+                </Link>
+              )}
+            </div>
+          </li>
+        ))}
+      </ul>
+    </GamePanel>
+  )
+}

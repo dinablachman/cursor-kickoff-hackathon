@@ -1,32 +1,43 @@
-# React + TypeScript + Vite
+# Campus Bug Bounty Board — Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Mario-style world map UI for the Campus Bug Bounty Board.
 
-Currently, two official plugins are available:
+## Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- React + Vite + TypeScript
+- Tailwind CSS + game-styled panels
+- React Router, TanStack Query, framer-motion
 
-## React Compiler
+## Run
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```bash
+cd frontend
+npm install
+npm run dev
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+Open http://localhost:5173
+
+## Mock API
+
+By default `VITE_USE_MOCK=true` (see `.env`) so the map works without the FastAPI backend.
+
+To hit a real backend on `:8000`:
+
+```bash
+# .env
+VITE_USE_MOCK=false
+```
+
+Vite proxies `/api` → `http://localhost:8000`.
+
+## Controls
+
+- Arrow keys — move avatar between levels
+- Enter / Space — enter selected level / Ideas Lab
+- Tab — toggle quick-access Apps sidebar
+- Click anything — mouse works too
+
+## Login
+
+Dev “player select”: GitHub username + role (`student` / `maintainer`).
