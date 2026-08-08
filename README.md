@@ -45,7 +45,7 @@ There is no auth. Every request identifies itself with two headers, and users ar
 use:
 
 ```
-X-GitHub-Username: prof-ada
+X-GitHub-Username: ShawnLi14
 X-Role: maintainer      # or: student
 ```
 
@@ -131,6 +131,28 @@ cd backend
 
 Runs the full lifecycle — repo registration, sync, claim caps, PR verification, every review path,
 and the ideas flows — against a throwaway SQLite file in mock mode.
+
+## Demo campus apps
+
+Three public sibling repositories with seeded `bounty` issues for live sync and review demos:
+
+| App | Repo | Hero bug | Fixture PR |
+|-----|------|----------|------------|
+| Campus Ride | [campus-ride](https://github.com/ShawnLi14/campus-ride) | ETA string sort | [#3 failing CI](https://github.com/ShawnLi14/campus-ride/pull/3) (request changes) |
+| Study Spot | [study-spot](https://github.com/ShawnLi14/study-spot) | Inclusive booking boundaries | [#3 passing CI](https://github.com/ShawnLi14/study-spot/pull/3) (approve) |
+| Campus Bites API | [campus-bites-api](https://github.com/ShawnLi14/campus-bites-api) | Multi-allergen exclusion | — |
+
+Each repo has two open `bounty`-labeled issues, `difficulty: easy` / `difficulty: medium` labels, CI, a `demo-buggy-v1` reset tag, and presenter notes in `DEMO.md`.
+
+```bash
+gh issue list --repo ShawnLi14/campus-ride --label bounty
+gh issue list --repo ShawnLi14/study-spot --label bounty
+gh issue list --repo ShawnLi14/campus-bites-api --label bounty
+```
+
+Suggested walkthrough once the board is running: register the three repos → sync → claim a hero bounty → submit/view the fixture PRs → request changes on Ride #3 / approve Study Spot #3.
+
+Design: [docs/superpowers/specs/2026-08-08-campus-demo-apps-design.md](docs/superpowers/specs/2026-08-08-campus-demo-apps-design.md)
 
 ## Notes for the frontend team
 
