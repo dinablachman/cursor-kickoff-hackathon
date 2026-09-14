@@ -4,14 +4,32 @@ Campus app maintainers register GitHub repos, bugs become claimable bounties (sy
 GitHub issues or posted manually), and students submit PRs that go through CI checks plus human
 review.
 
-This repo is API-first: `backend/` is the real deliverable, `frontend/` is a deliberately plain
-harness for exercising the endpoints while the production UI is built separately.
+`backend/` is the FastAPI board. `frontend/` is a Mario-style world-map UI that talks to it
+over `/api`. Production serves both from one process.
 
 ## Stack
 
 - `backend/` — FastAPI + SQLAlchemy + SQLite
-- `frontend/` — React + Vite + TypeScript test harness
+- `frontend/` — React + Vite + TypeScript world-map UI
 - GitHub REST API for repo validation, issue sync, and PR/CI status
+
+## One-port deploy
+
+Build the UI and serve it from FastAPI (seeds demo data on first boot):
+
+```bash
+./scripts/start.sh
+```
+
+The app listens on `http://localhost:8000` (override with `PORT`). Docker:
+
+```bash
+docker build -t campus-bounty-board .
+docker run --rm -p 8000:8000 campus-bounty-board
+```
+
+`render.yaml` is included for a free Render web service from this Dockerfile.
+Demo logins after seed: `student-lin` (student) or `prof-ada` (maintainer).
 
 ## Quick start
 
@@ -29,7 +47,7 @@ uvicorn app.main:app --reload
 
 API runs at `http://localhost:8000`, interactive docs at `http://localhost:8000/docs`.
 
-### Frontend harness
+### Frontend (dev)
 
 ```bash
 cd frontend
@@ -37,7 +55,8 @@ npm install
 npm run dev
 ```
 
-Runs at `http://localhost:5173`. Set `VITE_API_URL` if the backend isn't on port 8000.
+Runs at `http://localhost:5173` and proxies `/api` to the backend on port 8000.
+Leave `VITE_USE_MOCK` unset (or `false`) to use the real FastAPI backend.
 
 ## Identity
 

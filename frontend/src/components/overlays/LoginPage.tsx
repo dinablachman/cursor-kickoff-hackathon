@@ -80,6 +80,10 @@ export function LoginPage() {
         <button type="submit" className="game-btn game-btn-blue w-full" disabled={loading}>
           {loading ? 'Loading…' : 'Start Game ▶'}
         </button>
+        <p className="mt-4 text-center text-xs text-[#6b4a2a]">
+          Demo logins: <strong>student-lin</strong> (student) or{' '}
+          <strong>prof-ada</strong> (maintainer)
+        </p>
       </form>
 
       <p className="absolute bottom-2 left-1/2 z-10 w-full -translate-x-1/2 px-4 text-center font-pixel text-[7px] leading-relaxed text-white/80">
