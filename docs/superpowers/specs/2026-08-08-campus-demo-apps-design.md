@@ -64,7 +64,7 @@ Each repository includes:
 
 ## Board integration note
 
-Actual bounty-board registration and sync remain blocked until the FastAPI backend exists. This design prepares and verifies the GitHub-side demo contract first.
+The bounty board seeds and registers these three repos as the default test apps (`backend/seed.py`, frontend mock store, and mock GitHub fixtures). With `GITHUB_TOKEN` set, sync pulls the live `bounty`-labeled issues; without a token, mock mode serves the same six fixtures offline.
 
 ## Live walkthrough (once board exists)
 

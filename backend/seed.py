@@ -8,37 +8,25 @@ import sys
 
 from app import models
 from app.database import Base, SessionLocal, engine, init_db
+from app.routers.repos import difficulty_from_issue
 from app.services.github import get_github_service
 
-MAINTAINERS = [
-    ("prof-ada", "campus/coursemap", "Course planner used by ~4k students"),
-    ("dean-hopper", "campus/dorm-laundry", "Laundry machine availability tracker"),
+# Public demo apps under ShawnLi14 — see docs/superpowers/specs/2026-08-08-campus-demo-apps-design.md
+DEMO_REPOS = [
+    ("prof-ada", "ShawnLi14/campus-ride", "Demo campus shuttle arrival board"),
+    ("prof-ada", "ShawnLi14/study-spot", "Demo study room booking app"),
+    ("dean-hopper", "ShawnLi14/campus-bites-api", "Demo campus dining API"),
 ]
 
 STUDENTS = ["student-lin", "student-rey", "student-kai"]
 
-MANUAL_BOUNTIES = [
-    (
-        "campus/coursemap",
-        "Prerequisite chains render off-screen on mobile",
-        "The graph view overflows the viewport below 400px. Needs responsive panning.",
-        "medium",
-    ),
-    (
-        "campus/dorm-laundry",
-        "Push notification when a machine finishes",
-        "Opt-in web push so students stop camping in the laundry room.",
-        "hard",
-    ),
-]
-
 IDEAS = [
     (
         "student-lin",
-        "Bus tracker widget on the home screen",
-        "Live shuttle ETAs so nobody sprints for a bus that already left.",
+        "Favorite stop pin on the ride board",
+        "Pin a habitual stop so the arrival board scrolls it into view first.",
         "feature",
-        "campus/coursemap",
+        "ShawnLi14/campus-ride",
     ),
     (
         "student-rey",
@@ -49,10 +37,10 @@ IDEAS = [
     ),
     (
         "student-kai",
-        "Show laundry machine history",
-        "Chart the busiest hours so students can plan around them.",
+        "Show popular booking hours",
+        "Chart the busiest study-room slots so students can plan around them.",
         "feature",
-        "campus/dorm-laundry",
+        "ShawnLi14/study-spot",
     ),
 ]
 
@@ -83,7 +71,7 @@ def main() -> None:
     repos_by_name: dict[str, models.Repo] = {}
 
     try:
-        for username, full_name, description in MAINTAINERS:
+        for username, full_name, description in DEMO_REPOS:
             maintainer = get_or_create_user(db, username, models.ROLE_MAINTAINER)
             owner, name = full_name.split("/")
             repo = (
@@ -113,20 +101,12 @@ def main() -> None:
             for issue in issues:
                 if issue.number in existing:
                     continue
-                difficulty = next(
-                    (
-                        label
-                        for label in issue.labels
-                        if label in {"easy", "medium", "hard"}
-                    ),
-                    "medium",
-                )
                 db.add(
                     models.Bounty(
                         repo_id=repo.id,
                         title=issue.title,
                         description=issue.body,
-                        difficulty=difficulty,
+                        difficulty=difficulty_from_issue(issue),
                         source=models.SOURCE_SYNCED,
                         github_issue_number=issue.number,
                         github_issue_url=issue.html_url,
@@ -134,26 +114,6 @@ def main() -> None:
                 )
                 synced += 1
             print(f"Synced {len(issues)} labeled issues from {full_name} ({service.mode})")
-
-        manual = 0
-        for full_name, title, description, difficulty in MANUAL_BOUNTIES:
-            repo = repos_by_name[full_name]
-            exists = (
-                db.query(models.Bounty)
-                .filter(models.Bounty.repo_id == repo.id, models.Bounty.title == title)
-                .first()
-            )
-            if exists is None:
-                db.add(
-                    models.Bounty(
-                        repo_id=repo.id,
-                        title=title,
-                        description=description,
-                        difficulty=difficulty,
-                        source=models.SOURCE_MANUAL,
-                    )
-                )
-                manual += 1
 
         ideas = 0
         for username, title, description, category, repo_full_name in IDEAS:
@@ -184,8 +144,7 @@ def main() -> None:
 
         db.commit()
         print(
-            f"Seeded {len(repos_by_name)} repos, {synced} synced bounties, "
-            f"{manual} manual bounties, {ideas} ideas."
+            f"Seeded {len(repos_by_name)} repos, {synced} synced bounties, {ideas} ideas."
         )
         print("Log in as prof-ada (maintainer) or student-lin (student).")
     finally:

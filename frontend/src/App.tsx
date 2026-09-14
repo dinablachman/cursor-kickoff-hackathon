@@ -1,85 +1,55 @@
-import { useEffect, useState } from "react";
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { Toaster } from 'sonner'
+import { AuthProvider } from '@/auth/AuthContext'
+import { RequireAuth } from '@/auth/RequireAuth'
+import { LoginPage } from '@/components/overlays/LoginPage'
+import { WorldMapPage } from '@/components/map/WorldMapPage'
+import { LevelPanel } from '@/components/overlays/LevelPanel'
+import { BountyDetail } from '@/components/overlays/BountyDetail'
+import { MyClaims } from '@/components/overlays/MyClaims'
+import { ReviewQueue } from '@/components/overlays/ReviewQueue'
+import { ReposPanel } from '@/components/overlays/ReposPanel'
+import { IdeaDetail, IdeasBoard, NewIdea } from '@/components/overlays/Ideas'
 
-import type { Identity } from "./api";
-import { api } from "./api";
-import BoardPage from "./pages/BoardPage";
-import IdeasPage from "./pages/IdeasPage";
-import MyClaimsPage from "./pages/MyClaimsPage";
-import ReposPage from "./pages/ReposPage";
-import ReviewsPage from "./pages/ReviewsPage";
-
-const TABS = ["repos", "board", "claims", "reviews", "ideas"] as const;
-type Tab = (typeof TABS)[number];
-
-const STORAGE_KEY = "bounty-board-identity";
-
-function loadIdentity(): Identity {
-  try {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) return JSON.parse(stored) as Identity;
-  } catch {
-    // fall through to the default identity
-  }
-  return { username: "student-lin", role: "student" };
-}
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5_000,
+      retry: 1,
+    },
+  },
+})
 
 export default function App() {
-  const [identity, setIdentity] = useState<Identity>(loadIdentity);
-  const [tab, setTab] = useState<Tab>("board");
-  const [githubMode, setGithubMode] = useState<string>("...");
-
-  useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(identity));
-  }, [identity]);
-
-  useEffect(() => {
-    api
-      .health()
-      .then((data) => setGithubMode(data.github_mode))
-      .catch(() => setGithubMode("backend unreachable"));
-  }, []);
-
   return (
-    <>
-      <header className="identity">
-        <strong>Bounty Board API harness</strong>
-        <label>
-          acting as{" "}
-          <input
-            value={identity.username}
-            onChange={(event) => setIdentity({ ...identity, username: event.target.value })}
-          />
-        </label>
-        <label>
-          role{" "}
-          <select
-            value={identity.role}
-            onChange={(event) =>
-              setIdentity({ ...identity, role: event.target.value as Identity["role"] })
-            }
-          >
-            <option value="student">student</option>
-            <option value="maintainer">maintainer</option>
-          </select>
-        </label>
-        <span className="muted">github: {githubMode}</span>
-      </header>
-
-      <nav>
-        {TABS.map((name) => (
-          <button key={name} aria-current={tab === name} onClick={() => setTab(name)}>
-            {name}
-          </button>
-        ))}
-      </nav>
-
-      <main>
-        {tab === "repos" && <ReposPage identity={identity} />}
-        {tab === "board" && <BoardPage identity={identity} />}
-        {tab === "claims" && <MyClaimsPage identity={identity} />}
-        {tab === "reviews" && <ReviewsPage identity={identity} />}
-        {tab === "ideas" && <IdeasPage identity={identity} />}
-      </main>
-    </>
-  );
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/login" element={<LoginPage />} />
+            <Route element={<RequireAuth />}>
+              <Route path="/" element={<WorldMapPage />}>
+                <Route path="app/:repoId" element={<LevelPanel />} />
+                <Route path="app/:repoId/bounty/:bountyId" element={<BountyDetail />} />
+                <Route path="claims" element={<MyClaims />} />
+                <Route path="review" element={<ReviewQueue />} />
+                <Route path="repos" element={<ReposPanel />} />
+                <Route path="ideas" element={<IdeasBoard />} />
+                <Route path="ideas/new" element={<NewIdea />} />
+                <Route path="ideas/:ideaId" element={<IdeaDetail />} />
+              </Route>
+            </Route>
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </BrowserRouter>
+        <Toaster
+          position="top-center"
+          toastOptions={{
+            className: 'font-sans border-4 border-[#2b2b2b] shadow-lg',
+          }}
+        />
+      </AuthProvider>
+    </QueryClientProvider>
+  )
 }

@@ -203,27 +203,102 @@ class LiveGitHubService:
         }.get(state, CI_NONE)
 
 
+# Fixture issues mirroring ShawnLi14's public campus demo apps (mock mode / offline demos).
+DEMO_REPO_ISSUES: dict[str, list[tuple[int, str, str, str]]] = {
+    "ShawnLi14/campus-ride": [
+        (
+            1,
+            "Arrival board sorts ETAs lexicographically instead of by soonest arrival",
+            "ETA cards order by label text, so \"12 min\" can appear before \"3 min\".",
+            "easy",
+        ),
+        (
+            2,
+            "Wheelchair accessibility filter does not restore hidden shuttles when disabled",
+            "Turning off wheelchair-accessible-only does not restore filtered shuttles until refresh.",
+            "medium",
+        ),
+    ],
+    "ShawnLi14/study-spot": [
+        (
+            1,
+            "Back-to-back room bookings are rejected as overlapping",
+            "Adjacent slots that only share an endpoint are treated as conflicts.",
+            "medium",
+        ),
+        (
+            2,
+            "Minimum capacity filter only shows exact capacity matches",
+            "A 4+ seats filter hides rooms larger than 4.",
+            "easy",
+        ),
+    ],
+    "ShawnLi14/campus-bites-api": [
+        (
+            1,
+            "Excluding multiple allergens still returns dishes containing one of them",
+            "Multi-allergen exclusion uses AND semantics instead of removing any match.",
+            "medium",
+        ),
+        (
+            2,
+            "Sold-out menu items still appear when available_only=true",
+            "Dishes with remaining == 0 are still returned as available.",
+            "easy",
+        ),
+    ],
+}
+
+DEMO_REPO_DESCRIPTIONS = {
+    "ShawnLi14/campus-ride": "Demo campus shuttle arrival board for Campus Bug Bounty Board",
+    "ShawnLi14/study-spot": "Demo study room booking app for Campus Bug Bounty Board",
+    "ShawnLi14/campus-bites-api": "Demo campus dining API for Campus Bug Bounty Board",
+}
+
+
 class MockGitHubService:
     """Deterministic stand-in used when no token is configured.
 
+    Known ShawnLi14 demo repos return their real bounty fixtures. For other repos,
     PR number drives the outcome so demos can hit every branch on purpose:
     ``%3 == 0`` merged + passing, ``%3 == 1`` open + passing, else open + failing.
+
+    Fixture PR shortcuts for the live walkthrough:
+    - campus-ride #3 → open + failing CI (request-changes path)
+    - study-spot #3 → open + passing CI (approve path)
     """
 
     mode = "mock"
 
     def validate_repo(self, owner: str, name: str) -> RepoInfo:
+        full_name = f"{owner}/{name}"
         return RepoInfo(
             owner=owner,
             name=name,
-            description=f"Mock repo for {owner}/{name} (no GITHUB_TOKEN configured)",
-            html_url=f"https://github.com/{owner}/{name}",
+            description=DEMO_REPO_DESCRIPTIONS.get(
+                full_name, f"Mock repo for {full_name} (no GITHUB_TOKEN configured)"
+            ),
+            html_url=f"https://github.com/{full_name}",
         )
 
     def list_bounty_issues(self, owner: str, name: str, label: str) -> list[IssueInfo]:
+        full_name = f"{owner}/{name}"
+        fixtures = DEMO_REPO_ISSUES.get(full_name)
+        if fixtures is not None:
+            return [
+                IssueInfo(
+                    number=number,
+                    title=title,
+                    body=body,
+                    html_url=f"https://github.com/{full_name}/issues/{number}",
+                    labels=[label, f"difficulty: {difficulty}"],
+                )
+                for number, title, body, difficulty in fixtures
+            ]
+
         # crc32, not hash(): issue numbers must stay stable across processes so
         # re-syncing a repo updates the same bounties instead of duplicating them.
-        seed = zlib.crc32(f"{owner}/{name}".encode()) % 50
+        seed = zlib.crc32(full_name.encode()) % 50
         templates = [
             ("Fix crash on empty search query", "easy"),
             ("Dark mode toggle resets on reload", "medium"),
@@ -236,21 +311,27 @@ class MockGitHubService:
                 IssueInfo(
                     number=number,
                     title=title,
-                    body=f"Mock issue for {owner}/{name}. Difficulty hint: {difficulty}.",
-                    html_url=f"https://github.com/{owner}/{name}/issues/{number}",
+                    body=f"Mock issue for {full_name}. Difficulty hint: {difficulty}.",
+                    html_url=f"https://github.com/{full_name}/issues/{number}",
                     labels=[label, difficulty],
                 )
             )
         return issues
 
     def get_pull_request(self, ref: PullRequestRef) -> PullRequestInfo:
-        bucket = ref.number % 3
-        if bucket == 0:
-            state, ci = "merged", CI_SUCCESS
-        elif bucket == 1:
+        # Match the prepared demo PRs on the public campus apps.
+        if ref.full_name.lower() == "shawnli14/campus-ride" and ref.number == 3:
+            state, ci = "open", CI_FAILURE
+        elif ref.full_name.lower() == "shawnli14/study-spot" and ref.number == 3:
             state, ci = "open", CI_SUCCESS
         else:
-            state, ci = "open", CI_FAILURE
+            bucket = ref.number % 3
+            if bucket == 0:
+                state, ci = "merged", CI_SUCCESS
+            elif bucket == 1:
+                state, ci = "open", CI_SUCCESS
+            else:
+                state, ci = "open", CI_FAILURE
         return PullRequestInfo(
             number=ref.number,
             state=state,
