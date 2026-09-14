@@ -28,34 +28,9 @@ docker build -t campus-bounty-board .
 docker run --rm -p 8000:8000 campus-bounty-board
 ```
 
-`render.yaml` is included for a free Render web service from this Dockerfile.
-Demo logins after seed: `student-lin` (student) or `prof-ada` (maintainer).
-
-## Persistent public URL (Cloudflare + Render)
-
-Deploy the Docker app on Render, then put Cloudflare in front so the public hostname stays
-stable if the Render URL changes.
-
-1. **Render** — Blueprint this repo (`render.yaml`) or create a Docker web service from `main`.
-   Health check: `/api/health`. Copy the `https://….onrender.com` URL.
-2. **Cloudflare secrets** on this GitHub repo:
-   - `CLOUDFLARE_API_TOKEN` — [Create token](https://dash.cloudflare.com/profile/api-tokens) with
-     Edit Cloudflare Workers
-   - `CLOUDFLARE_ACCOUNT_ID` — from the Workers dashboard sidebar
-3. **Deploy the Worker** — Actions → **Deploy Cloudflare** → run workflow → paste the Render URL
-   as `origin`. The Worker is `campus-bounty-board` on `workers.dev`.
-
-Same-origin `/` + `/api`, so no extra CORS. Optional custom domain: CNAME to the Worker or to
-Render, SSL mode **Full (strict)**.
-
-To deploy the Worker from a laptop after Render is up:
-
-```bash
-export CLOUDFLARE_API_TOKEN=...
-export CLOUDFLARE_ACCOUNT_ID=...
-export ORIGIN=https://YOUR-SERVICE.onrender.com
-./scripts/setup-cloudflare.sh
-```
+`render.yaml` is included for a free Render web service from this Dockerfile — same path as
+xtinct (`https://xtinct.onrender.com`). No API tokens. Demo identity is just a header
+(`student-lin` / `prof-ada`), not a real login.
 
 ## Quick start
 
